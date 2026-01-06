@@ -1,0 +1,75 @@
+
+{% extends "blog/base.html" %}
+{% load blog_tags %}
+{% include "pagination.html" with page=posts %}
+
+{% block content %}
+
+<h2>Lates News</h2>
+
+{% if tag %}
+    <h2>Posts tagged with "{{ tag.name }}"</h2>
+{% endif %}
+
+<!--<p class="tags">
+  Tags:
+    {% for tag in post.tags.all %}
+        <a href="{% url "blog:post_list_by_tag" tag.slug %}">
+            {{ tag.name }}
+    </a>
+        {% if not forloop.last %}, {% endif %}
+    {% endfor %}
+</p>
+-->
+
+{% for post in posts %}
+
+    <div class="post-card">
+        <!-- <article> -->
+        <h2>
+            <a href="{{ post.get_absolute_url }}">
+                {{ post.title }}
+            </a>
+        </h2>
+        
+        <p class="tags">Tags: {{ post.tags.all|join:", " }}</p>
+
+
+        <p class="post-meta">
+            Published {{ post.publish|date:"M d, Y" }} by {{ post.author }}
+        </p>
+
+        <p>
+            {{ post.body|markdown|truncatewords:30 }}
+        </p>
+
+        <a href="{{ post.get_absolute_url }}" class="read-more">
+            Read more
+        </a>
+   </div>
+
+        {% empty %}
+            <p>No posts available </p>
+
+    {% endfor %}
+
+    <!-- PAGINATION CONTROLS -->
+<div class="pagination">
+
+    {% if posts.has_previous %}
+        <a href="?page={{ posts.previous_page_number }}">« Previous</a>
+    {% endif %}
+
+    <span class="current">
+        Page {{ posts.number }} of {{ posts.paginator.num_pages }}
+    </span>
+
+    {% if posts.has_next %}
+        <a href="?page={{ posts.next_page_number }}">Next »</a>
+    {% endif %}
+
+</div>
+
+
+
+{% endblock %}
